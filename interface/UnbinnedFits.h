@@ -45,7 +45,7 @@ double SignalWeight();
 
 //double mc_templEff(BminiMCTree*, TH1D* ,TTree*, bool ,int,int, int,double);//this function fill the histogram of mass spectum with MC data passing the same selection of data and returns as double the efficiency for each BDT cut
 
-void fit(TH1D*,TH1D* , int , int, bool,int, double, double*,std::string);
+void fit(std::string filename , int , int, bool,int, double, double*,std::string);
 
 
 double PoissonError(RooWorkspace);

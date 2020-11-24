@@ -1,5 +1,6 @@
-#include "../interface/DiLeptonMassClass.h"
-#include "../interface/DiLeptonFromBClass.h"
+//#include "../interface/DiLeptonMassClass.h"
+//#include "../interface/DiLeptonFromBClass.h"
+//#include "../interface/MllTreeClass.h"
 #include "../interface/BPark_fitUtils.h"
 #include <iostream>
 #include <utility>
@@ -98,7 +99,7 @@ void Slicer(std::vector<TH1D*> proj,std::string PLOTPATH,int bin,float min, floa
 
 
 
-void DoubleSlicer(std::string PLOTPATH,int bin,float min, float max,std::string xaxis,TH2D *histmc, TH2D *histdata, std::string filename, bool doFit);
+void DoubleSlicer(std::string PLOTPATH,int bin,float min, float max,std::string xaxis,TH2D *histmc, TH2D *histdata, std::string filename, bool doFit,std::string etaRegion);
 
 
 void AngularCorrection(struct pos* pos, TVector3* vertex,struct pos ECALpoint);
