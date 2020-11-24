@@ -1,8 +1,5 @@
-#include "../interface/DiLeptonMassClass.h"
-
-
-
-void DiLeptonMassClass::Init(TTree *tree)
+#include "../interface/DileptonGeneralClass.h"
+void DileptonGeneralClass::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -21,6 +18,27 @@ void DiLeptonMassClass::Init(TTree *tree)
    fChain->SetBranchAddress("run", &run, &b_run);
    fChain->SetBranchAddress("luminosityBlock", &luminosityBlock, &b_luminosityBlock);
    fChain->SetBranchAddress("event", &event, &b_event);
+   fChain->SetBranchAddress("nelectronPair", &nelectronPair, &b_nelectronPair);
+   fChain->SetBranchAddress("electronPair_eta", electronPair_eta, &b_electronPair_eta);
+   fChain->SetBranchAddress("electronPair_l1_SC_Energy", electronPair_l1_SC_Energy, &b_electronPair_l1_SC_Energy);
+   fChain->SetBranchAddress("electronPair_l1_SC_RegEnergy", electronPair_l1_SC_RegEnergy, &b_electronPair_l1_SC_RegEnergy);
+   fChain->SetBranchAddress("electronPair_l1_SC_rawEnergy", electronPair_l1_SC_rawEnergy, &b_electronPair_l1_SC_rawEnergy);
+   fChain->SetBranchAddress("electronPair_l1_SCeta", electronPair_l1_SCeta, &b_electronPair_l1_SCeta);
+   fChain->SetBranchAddress("electronPair_l1_SCphi", electronPair_l1_SCphi, &b_electronPair_l1_SCphi);
+   fChain->SetBranchAddress("electronPair_l2_SC_Energy", electronPair_l2_SC_Energy, &b_electronPair_l2_SC_Energy);
+   fChain->SetBranchAddress("electronPair_l2_SC_RegEnergy", electronPair_l2_SC_RegEnergy, &b_electronPair_l2_SC_RegEnergy);
+   fChain->SetBranchAddress("electronPair_l2_SC_rawEnergy", electronPair_l2_SC_rawEnergy, &b_electronPair_l2_SC_rawEnergy);
+   fChain->SetBranchAddress("electronPair_l2_SCeta", electronPair_l2_SCeta, &b_electronPair_l2_SCeta);
+   fChain->SetBranchAddress("electronPair_l2_SCphi", electronPair_l2_SCphi, &b_electronPair_l2_SCphi);
+   fChain->SetBranchAddress("electronPair_mass", electronPair_mass, &b_electronPair_mass);
+   fChain->SetBranchAddress("electronPair_mll_llfit", electronPair_mll_llfit, &b_electronPair_mll_llfit);
+   fChain->SetBranchAddress("electronPair_mll_raw", electronPair_mll_raw, &b_electronPair_mll_raw);
+   fChain->SetBranchAddress("electronPair_phi", electronPair_phi, &b_electronPair_phi);
+   fChain->SetBranchAddress("electronPair_pt", electronPair_pt, &b_electronPair_pt);
+   fChain->SetBranchAddress("electronPair_charge", electronPair_charge, &b_electronPair_charge);
+   fChain->SetBranchAddress("electronPair_l1Idx", electronPair_l1Idx, &b_electronPair_l1Idx);
+   fChain->SetBranchAddress("electronPair_l2Idx", electronPair_l2Idx, &b_electronPair_l2Idx);
+   fChain->SetBranchAddress("electronPair_pdgId", electronPair_pdgId, &b_electronPair_pdgId);
    fChain->SetBranchAddress("nElectron", &nElectron, &b_nElectron);
    fChain->SetBranchAddress("Electron_dxy", Electron_dxy, &b_Electron_dxy);
    fChain->SetBranchAddress("Electron_dxyErr", Electron_dxyErr, &b_Electron_dxyErr);
@@ -49,20 +67,4 @@ void DiLeptonMassClass::Init(TTree *tree)
    fChain->SetBranchAddress("Electron_isLowPt", Electron_isLowPt, &b_Electron_isLowPt);
    fChain->SetBranchAddress("Electron_isPF", Electron_isPF, &b_Electron_isPF);
    fChain->SetBranchAddress("Electron_isPFoverlap", Electron_isPFoverlap, &b_Electron_isPFoverlap);
-   fChain->SetBranchAddress("nelectronPair", &nelectronPair, &b_nelectronPair);
-   fChain->SetBranchAddress("electronPair_l1_SC_Energy", electronPair_l1_SC_Energy, &b_electronPair_l1_SC_Energy);
-   fChain->SetBranchAddress("electronPair_l1_SC_RegEnergy", electronPair_l1_SC_RegEnergy, &b_electronPair_l1_SC_RegEnergy);
-   fChain->SetBranchAddress("electronPair_l1_SC_rawEnergy", electronPair_l1_SC_rawEnergy, &b_electronPair_l1_SC_rawEnergy);
-   fChain->SetBranchAddress("electronPair_l1_SCeta", electronPair_l1_SCeta, &b_electronPair_l1_SCeta);
-   fChain->SetBranchAddress("electronPair_l1_SCphi", electronPair_l1_SCphi, &b_electronPair_l1_SCphi);
-   fChain->SetBranchAddress("electronPair_l2_SC_Energy", electronPair_l2_SC_Energy, &b_electronPair_l2_SC_Energy);
-   fChain->SetBranchAddress("electronPair_l2_SC_RegEnergy", electronPair_l2_SC_RegEnergy, &b_electronPair_l2_SC_RegEnergy);
-   fChain->SetBranchAddress("electronPair_l2_SC_rawEnergy", electronPair_l2_SC_rawEnergy, &b_electronPair_l2_SC_rawEnergy);
-   fChain->SetBranchAddress("electronPair_l2_SCeta", electronPair_l2_SCeta, &b_electronPair_l2_SCeta);
-   fChain->SetBranchAddress("electronPair_l2_SCphi", electronPair_l2_SCphi, &b_electronPair_l2_SCphi);
-   fChain->SetBranchAddress("electronPair_mll_llfit", electronPair_mll_llfit, &b_electronPair_mll_llfit);
-   fChain->SetBranchAddress("electronPair_mll_raw", electronPair_mll_raw, &b_electronPair_mll_raw);
-   fChain->SetBranchAddress("electronPair_l1Idx", electronPair_l1Idx, &b_electronPair_l1Idx);
-   fChain->SetBranchAddress("electronPair_l2Idx", electronPair_l2Idx, &b_electronPair_l2Idx);
 }
-

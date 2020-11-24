@@ -1,5 +1,6 @@
 #include "../interface/BParkTools.h"
 #include "../src/BPark_fitUtils.cc"
+//#include "../src/UnbinnedFits.cc"
 //#include "../src/BPark_fitUtils.cc"
 /* ROOT::VecOps::RVec<bool> IsGood(unsigned int nB, 
  *    float *pT1, float *pT2, float *pTk, 
@@ -171,23 +172,24 @@ void superpos(std::string titlestring,TH1D * h1, TH1D* h2, const char* filename,
 	if (log){ canvas->SetLogy();
 		empty->GetYaxis()->SetRangeUser(1,std::max(h1->GetMaximum()*2.5,h2->GetMaximum()*2.5));
 	}else {
-		empty->GetYaxis()->SetRangeUser(0,std::max(h1->GetMaximum()*1.1,h2->GetMaximum()*1.1));
+		empty->GetYaxis()->SetRangeUser(0,std::max(h1->GetMaximum()*1.2,h2->GetMaximum()*1.2));
 	}
 	h1->SetLineWidth(4);
 	h2->SetLineWidth(4);
-	h1->SetLineColor(kRed-6);
-	h2->SetLineColor(kBlue-3);
+	h1->SetLineColor(kRed-7);
+	h2->SetLineColor(kCyan-3);
 	empty->GetXaxis()->SetTitle(titlestring.c_str());
 	empty->GetYaxis()->SetTitle("entries");
 	empty->Draw("");
 	h1->Draw("HISTsame");
 	h2->Draw("HISTsame");
-	l.SetTextSize(0.045);
+	l.SetTextSize(0.04);
 	l.SetTextAlign(13);
-	l.SetTextColor(kRed-6);
-	l.DrawLatex(h1->GetXaxis()->GetXmin()+0.4*(h1->GetXaxis()->GetXmax()-h1->GetXaxis()->GetXmin()),0.98*h1->GetMaximum(),(std::string("Signal ")+std::to_string((int)h1->GetEntries())).c_str());
-	l.SetTextColor(kBlue-3);
-	l.DrawLatex(h1->GetXaxis()->GetXmin()+0.4*(h1->GetXaxis()->GetXmax()-h1->GetXaxis()->GetXmin()),0.80*h1->GetMaximum(),(std::string("Background ")+std::to_string((int)h2->GetEntries())).c_str());
+	l.SetTextColor(kRed-7);
+	l.DrawLatex(h1->GetXaxis()->GetXmin()+0.03*(h1->GetXaxis()->GetXmax()-h1->GetXaxis()->GetXmin()),0.98*std::max(h1->GetMaximum()*1.2,h2->GetMaximum()*1.2),"Peak (m_{ll} < 100 GeV)" );
+	l.SetTextColor(kCyan-3);
+	l.DrawLatex(h1->GetXaxis()->GetXmin()+0.03*(h1->GetXaxis()->GetXmax()-h1->GetXaxis()->GetXmin()),0.9*std::max(h1->GetMaximum()*1.2,h2->GetMaximum()*1.2),"Shoulder (m_{ll} > 100 GeV)");
+//	l.DrawLatex(h1->GetXaxis()->GetXmin()+0.4*(h1->GetXaxis()->GetXmax()-h1->GetXaxis()->GetXmin()),0.80*h1->GetMaximum(),(std::string("Shoulder (m_{ll} < 100 GeV)")+std::to_string((int)h2->GetEntries())).c_str());
 	if (lable ) lables1D(canvas,h1);
 	canvas->SaveAs((std::string(filename)+".pdf").c_str());
 	canvas->SaveAs((PNGPATH+std::string(filename)+".png").c_str());
@@ -352,12 +354,14 @@ void Slicer(std::vector<TH1D*> *proj,std::string PLOTPATH,int bin,float min, flo
 //	TH1D * proj[bin];
 	for(i=0; i<bin;i++){
 		x[i]=min +(max-min)/bin*i;
-		char range[15]="";
+		char range[80]="";
 		int n;
-		n=sprintf(range,"%.3f;%.3f",x[i],x[i]+(max-min)/bin);
+		n=sprintf(range,"%.3f, %.3f",x[i],x[i]+(max-min)/bin);
 		proj->push_back(hist2D->ProjectionX(("nhits in "+std::string(hist2D->GetTitle())+std::to_string(i)+"range").c_str(),i+1,i+2));
 		proj->at(i)->GetXaxis()->SetTitle(xaxis.c_str());
 		proj->at(i)->GetYaxis()->SetTitle("entries");
+		std::cout << "Data: p_{e_1},p_{e_2} in ["+std::string(range)+"] GeV" << std::endl;
+		proj->at(i)->SetTitle(("Data: p_{e_{1}}, p_{e_{2}} in ["+std::string(range)+"] GeV").c_str());
 	//	mean[i]=proj.at(i)->GetMean();
 	//	RMS[i]=proj.at(i)->GetMeanError();
 
@@ -384,7 +388,7 @@ void Slicer(std::vector<TH1D*> *proj,std::string PLOTPATH,int bin,float min, flo
 	  }*/
 }
 
-void DoubleSlicer(std::string PLOTPATH,int bin,float min, float max,std::string xaxis,TH2D *histmc,TH2D* histdata,std::string filename, bool doFit){
+void DoubleSlicer(std::string PLOTPATH,int bin,float min, float max,std::string xaxis,TH2D *histmc,TH2D* histdata,std::string filename, bool doFit,std::string etaRegion){
 
 	int i,k;
 	float x[2][bin],mean[2][bin],RMS[2][bin];
@@ -400,13 +404,15 @@ void DoubleSlicer(std::string PLOTPATH,int bin,float min, float max,std::string 
 		char range[15]="";
 		int n;
 		n=sprintf(range,"%.3f;%.3f",x[k][i],x[k][i]+(max-min)/bin);
-		if (k == 0)proj[k][i]=histmc->ProjectionX(("nhits in"+std::to_string(i)+"range_mc").c_str(),i,i+1);
-		else if (k==1) proj[k][i]=histdata->ProjectionX(("nhits in"+std::to_string(i)+"range_data").c_str(),i,i+1);
+		if (k == 0)proj[k][i]=histmc->ProjectionX(("nhits in"+std::to_string(i)+"range_mc").c_str(),i+1,i+2);
+		else if (k==1) proj[k][i]=histdata->ProjectionX(("nhits in"+std::to_string(i)+"range_data").c_str(),i+1,i+2);
 		proj[k][i]->GetXaxis()->SetTitle(xaxis.c_str());
 		proj[k][i]->GetYaxis()->SetTitle("entries");
+		if(k==1)proj[k][i]->SetTitle(("Data: p_{e_1},p_{e_2} in ["+std::string(range)+"]").c_str());
+		else if (k==0)proj[k][i]->SetTitle(("MC: p_{e_1},p_{e_2} in ["+std::string(range)+"]").c_str());
 		mean[k][i]=proj[k][i]->GetMean();
 		RMS[k][i]=proj[k][i]->GetMeanError();
-		if (doFit && proj[k][i]->GetEntries()!=0 && k!=0 )fit(proj[0][i],proj[1][i],0,0,1,i,resu);
+		if (doFit && proj[k][i]->GetEntries()!=0 && k!=0 )fit(proj[0][i],proj[1][i],0,0,1,i,resu,etaRegion);
 
 		std::cout << "check: " << resu[0] << " " << resu[1] << " " <<resu[2] << " " <<resu[3] << " " << MASS_JPSI << std::endl;
 		
@@ -425,11 +431,12 @@ void DoubleSlicer(std::string PLOTPATH,int bin,float min, float max,std::string 
 
 	
 	setStyle();
+	std::cout << "check: " << peak_diff[0] << " " << peak_diff[1] << " " <<peak_diff[2] << " " <<peak_diff[3] << " " <<peak_diff[4]<< " " <<peak_diff[5]<< " " << MASS_JPSI << std::endl;
 	TGraphErrors* linearity = new TGraphErrors(bin,pt,peak_diff,pt_err,peak_diff_sigma);
-	TH2D* plotter = new TH2D("plotter","plotter",10,0,50,10,-0.005,0.005);
+	TH2D* plotter = new TH2D("plotter","plotter",10,0,50,10,-0.01,0.001);
 	  TCanvas* canvas = new TCanvas("","",800,600);
 	  plotter->GetXaxis()->SetTitle("pt(Gev/c)");
-	  plotter->GetYaxis()->SetTitle("(m^{peak}_{data}-m^{peak}_{MC}})/m_{PDG}");
+	  plotter->GetYaxis()->SetTitle("(m^{peak}_{data}-m^{peak}_{MC})/m_{PDG}");
 	  linearity->SetMarkerStyle(8);
 	  linearity->SetMarkerColor(kRed-6);
 	  linearity->SetLineColor(kRed-6);
@@ -438,16 +445,16 @@ void DoubleSlicer(std::string PLOTPATH,int bin,float min, float max,std::string 
 	  linearity->Draw("sameP");
 	  canvas->SaveAs((filename+".pdf").c_str());
 	TGraphErrors* linearity_sigma = new TGraphErrors(bin,pt,sigma_ratio,pt_err,sigma_ratio_unc);
-//	TH2D* plotter1 = new TH2D("plotter1","plotter1",10,0,50,10,-0.005,0.005);
+	TH2D* plotter1 = new TH2D("plotter1","plotter1",10,0,50,10,0.6,1.6);
 	  TCanvas* canvas_sig = new TCanvas("sigma","sigma",800,600);
-	  linearity_sigma->GetXaxis()->SetTitle("pt(Gev/c)");
-	  linearity_sigma->GetYaxis()->SetTitle("#sigma_{data}/#sigma_{MC}}");
+	  plotter1->GetXaxis()->SetTitle("pt(Gev/c)");
+	  plotter1->GetYaxis()->SetTitle("#sigma_{data}/#sigma_{MC}");
 	  linearity_sigma->SetMarkerStyle(8);
 	  linearity_sigma->SetMarkerColor(kRed-6);
 	  linearity_sigma->SetLineColor(kRed-6);
 	  //linearity->GetYaxis()->SetRangeUser(0,1);
-	//  plotter->Draw();
-	  linearity_sigma->Draw("AP");
+	  plotter1->Draw();
+	  linearity_sigma->Draw("sameP");
 	  canvas_sig->SaveAs((filename+"sigma.pdf").c_str());
 	  delete plotter; 
 	  delete canvas;
